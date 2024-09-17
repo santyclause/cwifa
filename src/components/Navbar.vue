@@ -1,18 +1,27 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { loadState, saveState } from '../utils/Store.js';
 import Login from './Login.vue';
+import { AppState } from '@/AppState.js';
+import { artService } from '@/services/ArtService.js';
 
-const theme = ref(loadState('theme') || 'light')
+// const theme = ref(loadState('theme') || 'light')
 
-onMounted(() => {
-  document.documentElement.setAttribute('data-bs-theme', theme.value)
-})
+// onMounted(() => {
+//   document.documentElement.setAttribute('data-bs-theme', theme.value)
+// })
 
-function toggleTheme() {
-  theme.value = theme.value == 'light' ? 'dark' : 'light'
-  document.documentElement.setAttribute('data-bs-theme', theme.value)
-  saveState('theme', theme.value)
+// function toggleTheme() {
+//   theme.value = theme.value == 'light' ? 'dark' : 'light'
+//   document.documentElement.setAttribute('data-bs-theme', theme.value)
+//   saveState('theme', theme.value)
+// }
+
+const currentPage = computed(() => AppState.currentPage);
+const totalPages = computed(() => AppState.totalPages);
+
+async function getArt(pgNum) {
+  await artService.getArt(pgNum);
 }
 
 </script>
@@ -46,9 +55,9 @@ function toggleTheme() {
       <Login />
       <div class="d-flex flex-column align-items-center">
         <i class="mdi mdi-book-open fs-2"></i>
-        <p>1 of 27</p>
-        <button>next</button>
-        <button>previous</button>
+        <p>{{currentPage}} of {{totalPages}}</p>
+        <button @click="getArt(currentPage + 1)" :disabled="currentPage >= totalPages" class="pg-btn">next</button>
+        <button @click="getArt(currentPage - 1)" :disabled="currentPage <= 1" class="pg-btn">previous</button>
       </div>
     </div>
   </nav>
@@ -65,6 +74,15 @@ img {
 
 .right-b {
   border-right: 1px solid black;
+}
+
+.pg-btn {
+  background-color: none;
+  border: 2px solid maroon;
+  border-radius: 100px;
+  padding:0.5em 1em;
+  width:100%;
+  margin-bottom: 1em;
 }
 
 .nav-link {

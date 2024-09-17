@@ -9,8 +9,8 @@ import { AppState } from './AppState.js';
     <Navbar />
   </header> -->
   <main class="container-fluid">
-    <section class="row">
-      <div class="col-2">
+    <section class="row justify-content-end">
+      <div class="col-2 fixed-top">
         <Navbar />
       </div>
       <div class="col-10 pt-5">
